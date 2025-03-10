@@ -440,7 +440,7 @@ require_once 'includes/header.php';
                                 $relationType = isset($relationTranslations[$relation['relationType']]) ? 
                                     $relationTranslations[$relation['relationType']] : $relation['relationType'];
                             ?>
-                            <a href="detail.php?id=<?= $relatedMedia['id'] ?>" class="flex bg-white rounded-lg shadow-sm hover:shadow-md p-3 transition">
+                            <a href="details.php?id=<?= $relatedMedia['id'] ?>" class="flex bg-white rounded-lg shadow-sm hover:shadow-md p-3 transition">
                                 <img src="<?= $relatedMedia['coverImage']['medium'] ?>" 
                                      alt="<?= htmlspecialchars($relatedMedia['title']['romaji']) ?>"
                                      class="w-16 h-24 object-cover rounded">
