@@ -10,7 +10,7 @@ if (!$id) {
 
 $query = '
 query ($id: Int) {
-    Media(id: $id) {
+    Media(id: $id, type: ANIME) {
         id
         title {
             romaji
@@ -22,7 +22,7 @@ query ($id: Int) {
             extraLarge
         }
         bannerImage
-        description
+        description(asHtml: false)
         episodes
         duration
         status
@@ -40,7 +40,7 @@ query ($id: Int) {
                 name
             }
         }
-        characters(sort: ROLE) {
+        characters(sort: [ROLE, RELEVANCE], perPage: 12) {
             nodes {
                 name {
                     full
@@ -61,6 +61,12 @@ query ($id: Int) {
 
 $variables = ['id' => $id];
 $response = fetchFromAniList($query, $variables);
+
+if (!isset($response['data']['Media'])) {
+    header('Location: index.php');
+    exit;
+}
+
 $anime = $response['data']['Media'];
 
 require_once 'includes/header.php';
