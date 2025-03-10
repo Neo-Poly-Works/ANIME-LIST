@@ -6,8 +6,18 @@
     <title>AniList Explorer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Electrolize:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Electrolize', sans-serif; }
+        .carousel-3d {
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+        .carousel-item {
+            transition: all 0.5s ease;
+            transform-origin: center center -400px;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen">
@@ -36,3 +46,5 @@
         </div>
     </nav>
     <div class="pt-20">
+</body>
+</html>

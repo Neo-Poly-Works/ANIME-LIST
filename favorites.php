@@ -53,8 +53,6 @@ async function loadFavorites() {
         return;
     }
 
-    emptyState.classList.add('hidden');
-
     try {
         const response = await fetch('https://graphql.anilist.co', {
             method: 'POST',
@@ -63,13 +61,20 @@ async function loadFavorites() {
                 'Accept': 'application/json',
             },
             body: JSON.stringify({
-                query: `<?= str_replace(["\n", '"'], [' ', '\"'], $query) ?>`,
+                query: document.querySelector('#graphql-query').textContent,
                 variables: { ids: favorites }
             })
         });
 
+        if (!response.ok) throw new Error('Network response was not ok');
+        
         const data = await response.json();
+        if (!data || !data.data || !data.data.Page || !data.data.Page.media) {
+            throw new Error('Invalid response format');
+        }
+
         const animes = data.data.Page.media;
+        emptyState.classList.add('hidden');
 
         container.innerHTML = animes.map(anime => `
             <div class="group bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300">
@@ -105,7 +110,11 @@ async function loadFavorites() {
             </div>
         `).join('');
     } catch (error) {
-        console.error('Erreur lors du chargement des favoris:', error);
+        console.error('Error:', error);
+        container.innerHTML = `
+            <div class="col-span-full text-center py-8 text-red-500">
+                Une erreur est survenue lors du chargement des favoris.
+            </div>`;
     }
 }
 
@@ -120,6 +129,13 @@ function removeFavorite(animeId) {
 }
 
 document.addEventListener('DOMContentLoaded', loadFavorites);
+
+// Add this hidden element to store the GraphQL query
+document.body.insertAdjacentHTML('beforeend', `
+    <script type="text/plain" id="graphql-query">
+        ${document.querySelector('script[type="text/plain"]')?.innerHTML || ''}
+    </script>
+`);
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
