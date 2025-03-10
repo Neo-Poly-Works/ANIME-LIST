@@ -190,7 +190,13 @@ require_once 'includes/header.php';
     <div class="mt-8">
         <h2 class="text-2xl font-bold mb-6">Personnages</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            <?php foreach (array_combine($anime['characters']['nodes'], $anime['characters']['edges']) as $character => $edge): ?>
+            <?php 
+            $characters = $anime['characters']['nodes'];
+            $edges = $anime['characters']['edges'];
+            for($i = 0; $i < count($characters); $i++): 
+                $character = $characters[$i];
+                $edge = $edges[$i];
+            ?>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
                 <img src="<?= $character['image']['medium'] ?>" 
                      alt="<?= htmlspecialchars($character['name']['full']) ?>"
@@ -202,7 +208,7 @@ require_once 'includes/header.php';
                     <p class="text-sm text-gray-500"><?= $edge['role'] ?></p>
                 </div>
             </div>
-            <?php endforeach; ?>
+            <?php endfor; ?>
         </div>
     </div>
     <?php endif; ?>
