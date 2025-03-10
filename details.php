@@ -159,9 +159,9 @@ require_once 'includes/header.php';
     <!-- Personnages -->
     <?php if (!empty($anime['characters']['nodes'])): ?>
     <div class="mt-8">
-        <h2 class="text-2xl font-bold mb-6">Personnages Principaux</h2>
+        <h2 class="text-2xl font-bold mb-6">Personnages</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            <?php foreach (array_slice($anime['characters']['nodes'], 0, 12) as $character): ?>
+            <?php foreach ($anime['characters']['nodes'] as $character): ?>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
                 <img src="<?= $character['image']['medium'] ?>" 
                      alt="<?= htmlspecialchars($character['name']['full']) ?>"
