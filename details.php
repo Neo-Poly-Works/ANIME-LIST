@@ -189,12 +189,10 @@ function formatDate($date)
 {
     if (!$date['year']) return 'Inconnue';
 
-    $months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-
     if ($date['month'] && $date['day']) {
-        return $date['day'] . ' ' . $months[$date['month']] . ' ' . $date['year'];
+        return sprintf('%02d/%02d/%04d', $date['day'], $date['month'], $date['year']);
     } elseif ($date['month']) {
-        return $months[$date['month']] . ' ' . $date['year'];
+        return sprintf('%02d/%04d', $date['month'], $date['year']);
     } else {
         return $date['year'];
     }
