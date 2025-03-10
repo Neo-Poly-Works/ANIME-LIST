@@ -31,6 +31,17 @@ query ($id: Int) {
         episodes
         duration
         status
+        format
+        startDate {
+            year
+            month
+            day
+        }
+        endDate {
+            year
+            month
+            day
+        }
         season
         seasonYear
         averageScore
@@ -43,30 +54,77 @@ query ($id: Int) {
         studios {
             nodes {
                 name
+                isAnimationStudio
             }
         }
-        characters(sort: [ROLE, RELEVANCE]) {
+        characters(sort: [ROLE, RELEVANCE], perPage: 12) {
             nodes {
                 name {
                     full
+                    native
                 }
                 image {
                     medium
+                    large
                 }
                 age
                 gender
                 description
                 bloodType
                 favourites
+                dateOfBirth {
+                    year
+                    month
+                    day
+                }
             }
             edges {
                 role
+                voiceActors(language: JAPANESE) {
+                    name {
+                        full
+                    }
+                    image {
+                        medium
+                    }
+                }
             }
         }
         streamingEpisodes {
             title
             thumbnail
             url
+            site
+        }
+        recommendations(sort: RATING_DESC, perPage: 6) {
+            nodes {
+                mediaRecommendation {
+                    id
+                    title {
+                        romaji
+                    }
+                    coverImage {
+                        medium
+                    }
+                    averageScore
+                }
+            }
+        }
+        relations {
+            edges {
+                relationType
+                node {
+                    id
+                    title {
+                        romaji
+                    }
+                    coverImage {
+                        medium
+                    }
+                    type
+                    format
+                }
+            }
         }
     }
 }';
@@ -81,14 +139,98 @@ if (!isset($response['data']['Media'])) {
 
 $anime = $response['data']['Media'];
 
+// Traduire le statut
+$statusTranslations = [
+    'FINISHED' => 'Terminé',
+    'RELEASING' => 'En cours',
+    'NOT_YET_RELEASED' => 'À venir',
+    'CANCELLED' => 'Annulé',
+    'HIATUS' => 'En pause'
+];
+
+$formatTranslations = [
+    'TV' => 'Série TV',
+    'MOVIE' => 'Film',
+    'OVA' => 'OVA',
+    'ONA' => 'ONA',
+    'SPECIAL' => 'Spécial',
+    'MUSIC' => 'Clip Musical',
+    'MANGA' => 'Manga',
+    'NOVEL' => 'Roman',
+    'ONE_SHOT' => 'One Shot'
+];
+
+$seasonTranslations = [
+    'WINTER' => 'Hiver',
+    'SPRING' => 'Printemps',
+    'SUMMER' => 'Été',
+    'FALL' => 'Automne'
+];
+
+$relationTranslations = [
+    'ADAPTATION' => 'Adaptation',
+    'PREQUEL' => 'Préquel',
+    'SEQUEL' => 'Suite',
+    'PARENT' => 'Œuvre principale',
+    'SIDE_STORY' => 'Histoire parallèle',
+    'CHARACTER' => 'Personnage commun',
+    'SUMMARY' => 'Résumé',
+    'ALTERNATIVE' => 'Alternative',
+    'SPIN_OFF' => 'Spin-off',
+    'OTHER' => 'Autre'
+];
+
+$status = isset($statusTranslations[$anime['status']]) ? $statusTranslations[$anime['status']] : $anime['status'];
+$format = isset($formatTranslations[$anime['format']]) ? $formatTranslations[$anime['format']] : $anime['format'];
+$season = isset($seasonTranslations[$anime['season']]) ? $seasonTranslations[$anime['season']] : $anime['season'];
+
+// Fonction pour formater les dates
+function formatDate($date) {
+    if (!$date['year']) return 'Inconnue';
+    
+    $months = ['', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    
+    if ($date['month'] && $date['day']) {
+        return $date['day'] . ' ' . $months[$date['month']] . ' ' . $date['year'];
+    } elseif ($date['month']) {
+        return $months[$date['month']] . ' ' . $date['year'];
+    } else {
+        return $date['year'];
+    }
+}
+
+// Période de diffusion
+$startDate = formatDate($anime['startDate']);
+$endDate = formatDate($anime['endDate']);
+$airing = $startDate . ($anime['status'] === 'FINISHED' ? ' au ' . $endDate : '');
+
 require_once 'includes/header.php';
 ?>
 
 <div class="container mx-auto px-4 py-8">
+    <!-- Système de navigation (fil d'Ariane) -->
+    <nav class="text-sm mb-6">
+        <ol class="flex items-center space-x-2">
+            <li><a href="index.php" class="text-indigo-600 hover:text-indigo-800">Accueil</a></li>
+            <li class="flex items-center space-x-2">
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <a href="search.php?type=ANIME" class="text-indigo-600 hover:text-indigo-800">Animes</a>
+            </li>
+            <li class="flex items-center space-x-2">
+                <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="text-gray-500 truncate max-w-xs"><?= htmlspecialchars($anime['title']['romaji']) ?></span>
+            </li>
+        </ol>
+    </nav>
+
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         <!-- Bannière avec overlay -->
         <?php if ($anime['bannerImage']): ?>
-        <div class="h-96 relative">
+        <div class="h-80 md:h-96 relative">
             <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= $anime['bannerImage'] ?>');"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-black/20"></div>
         </div>
@@ -98,45 +240,140 @@ require_once 'includes/header.php';
             <div class="flex flex-col md:flex-row gap-8">
                 <!-- Image de couverture -->
                 <div class="md:w-1/3 lg:w-1/4 flex-shrink-0">
-                    <div class="relative group">
+                    <div class="relative group rounded-lg overflow-hidden shadow-2xl">
                         <img src="<?= $anime['coverImage']['extraLarge'] ?>" 
                              alt="<?= htmlspecialchars($anime['title']['romaji']) ?>"
-                             class="w-full rounded-lg shadow-2xl">
+                             class="w-full transition duration-300 group-hover:scale-105">
+                        <div class="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-black to-transparent"></div>
                         <button onclick="toggleFavorite(<?= $anime['id'] ?>)" 
-                                class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition"
+                                class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition transform hover:scale-110"
                                 data-id="<?= $anime['id'] ?>">
                             <svg class="w-6 h-6 favorite-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"></svg>
                         </button>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3 py-1 bg-indigo-600 text-white text-sm rounded-full shadow-lg">
+                                <?= $format ?>
+                            </span>
+                        </div>
                     </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-col space-y-3 mt-4">
+                        <button id="watchlistBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            <span>Ajouter à ma liste</span>
+                        </button>
+                        
+                        <button id="shareBtn" class="w-full py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                            </svg>
+                            <span>Partager</span>
+                        </button>
+                    </div>
+
+                    <!-- Informations complémentaires -->
+                    <div class="bg-gray-50 rounded-xl p-4 mt-4">
+                        <h3 class="text-lg font-semibold mb-3">Informations</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Format</span>
+                                <span class="font-medium"><?= $format ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Statut</span>
+                                <span class="font-medium"><?= $status ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Diffusion</span>
+                                <span class="font-medium"><?= $airing ?></span>
+                            </div>
+                            <?php if ($anime['season'] && $anime['seasonYear']): ?>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Saison</span>
+                                <span class="font-medium"><?= $season ?> <?= $anime['seasonYear'] ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($anime['episodes']): ?>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Épisodes</span>
+                                <span class="font-medium"><?= $anime['episodes'] ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($anime['duration']): ?>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Durée</span>
+                                <span class="font-medium"><?= $anime['duration'] ?> min</span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Studios -->
+                    <?php if (!empty($anime['studios']['nodes'])): ?>
+                    <div class="bg-gray-50 rounded-xl p-4 mt-4">
+                        <h3 class="text-lg font-semibold mb-3">Studios</h3>
+                        <div class="space-y-2">
+                            <?php 
+                            foreach ($anime['studios']['nodes'] as $studio): 
+                                $isMain = isset($studio['isAnimationStudio']) && $studio['isAnimationStudio'];
+                            ?>
+                            <div class="flex items-center">
+                                <span class="<?= $isMain ? 'text-indigo-600 font-medium' : 'text-gray-700' ?>">
+                                    <?= $studio['name'] ?>
+                                </span>
+                                <?php if ($isMain): ?>
+                                <span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full">
+                                    Principal
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
-                <!-- Informations -->
+                <!-- Informations principales -->
                 <div class="flex-1">
                     <h1 class="text-4xl font-bold text-gray-900 mb-2">
                         <?= htmlspecialchars($anime['title']['romaji']) ?>
                     </h1>
-                    <?php if ($anime['title']['english']): ?>
-                    <h2 class="text-2xl text-gray-600 mb-4">
+                    <?php if ($anime['title']['english'] && $anime['title']['english'] !== $anime['title']['romaji']): ?>
+                    <h2 class="text-2xl text-gray-600 mb-1">
                         <?= htmlspecialchars($anime['title']['english']) ?>
                     </h2>
+                    <?php endif; ?>
+                    <?php if ($anime['title']['native']): ?>
+                    <h3 class="text-xl text-gray-500 mb-4">
+                        <?= htmlspecialchars($anime['title']['native']) ?>
+                    </h3>
                     <?php endif; ?>
 
                     <!-- Stats -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
-                            <div class="text-2xl font-bold text-indigo-600"><?= $anime['averageScore'] ?>%</div>
-                            <div class="text-sm text-gray-600">Score</div>
+                            <div class="text-2xl font-bold text-indigo-600">
+                                <?= $anime['averageScore'] ?? '?' ?>%
+                            </div>
+                            <div class="text-sm text-gray-600">Note</div>
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
-                            <div class="text-2xl font-bold text-indigo-600"><?= $anime['episodes'] ?? '?' ?></div>
+                            <div class="text-2xl font-bold text-indigo-600">
+                                <?= $anime['episodes'] ?? '?' ?>
+                            </div>
                             <div class="text-sm text-gray-600">Épisodes</div>
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
-                            <div class="text-2xl font-bold text-indigo-600"><?= $anime['duration'] ?? '?' ?></div>
+                            <div class="text-2xl font-bold text-indigo-600">
+                                <?= $anime['duration'] ?? '?' ?>
+                            </div>
                             <div class="text-sm text-gray-600">Minutes</div>
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
-                            <div class="text-2xl font-bold text-indigo-600"><?= $anime['popularity'] ?></div>
+                            <div class="text-2xl font-bold text-indigo-600">#<?= $anime['popularity'] ?></div>
                             <div class="text-sm text-gray-600">Popularité</div>
                         </div>
                     </div>
@@ -144,9 +381,9 @@ require_once 'includes/header.php';
                     <!-- Synopsis -->
                     <div class="prose max-w-none mb-8">
                         <h3 class="text-xl font-semibold mb-4">Synopsis</h3>
-                        <p class="text-gray-600 leading-relaxed markdown-content">
+                        <div class="text-gray-600 leading-relaxed markdown-content bg-gray-50 p-6 rounded-xl">
                             <?= $parsedown->text($anime['description']); ?>
-                        </p>
+                        </div>
                     </div>
 
                     <!-- Genres -->
@@ -154,9 +391,9 @@ require_once 'includes/header.php';
                         <h3 class="text-xl font-semibold mb-4">Genres</h3>
                         <div class="flex flex-wrap gap-2">
                             <?php foreach ($anime['genres'] as $genre): ?>
-                            <span class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm">
+                            <a href="search.php?genre=<?= urlencode($genre) ?>" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm transition transform hover:scale-105 hover:shadow-md">
                                 <?= $genre ?>
-                            </span>
+                            </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -166,25 +403,58 @@ require_once 'includes/header.php';
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold mb-4">Tags</h3>
                         <div class="flex flex-wrap gap-2">
-                            <?php foreach ($anime['tags'] as $tag): ?>
-                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm flex items-center">
+                            <?php 
+                            // Trier les tags par rang
+                            usort($anime['tags'], function($a, $b) {
+                                return $b['rank'] - $a['rank'];
+                            });
+                            
+                            foreach ($anime['tags'] as $tag): 
+                                // Définir la couleur de fond en fonction du rang
+                                $intensity = intval($tag['rank'] / 10);
+                                $bgClass = "bg-indigo-{$intensity}0";
+                                // Utiliser une couleur par défaut si l'intensité est trop faible
+                                if ($intensity < 3) {
+                                    $bgClass = "bg-gray-100";
+                                    $textClass = "text-gray-700";
+                                } else {
+                                    $textClass = "text-indigo-700";
+                                }
+                            ?>
+                            <span class="px-3 py-1 <?= $bgClass ?> <?= $textClass ?> rounded-full text-sm flex items-center">
                                 <?= $tag['name'] ?>
-                                <span class="ml-2 text-xs text-gray-500"><?= $tag['rank'] ?>%</span>
+                                <span class="ml-2 px-1.5 py-0.5 text-xs bg-white/60 text-indigo-800 rounded-full"><?= $tag['rank'] ?>%</span>
                             </span>
                             <?php endforeach; ?>
                         </div>
                     </div>
                     <?php endif; ?>
 
-                    <!-- Studios -->
-                    <?php if (!empty($anime['studios']['nodes'])): ?>
+                    <!-- Relations -->
+                    <?php if (!empty($anime['relations']['edges'])): ?>
                     <div class="mb-8">
-                        <h3 class="text-xl font-semibold mb-4">Studios</h3>
-                        <div class="flex flex-wrap gap-2">
-                            <?php foreach ($anime['studios']['nodes'] as $studio): ?>
-                            <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">
-                                <?= $studio['name'] ?>
-                            </span>
+                        <h3 class="text-xl font-semibold mb-4">Œuvres liées</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            <?php foreach ($anime['relations']['edges'] as $relation): 
+                                $relatedMedia = $relation['node'];
+                                $relationType = isset($relationTranslations[$relation['relationType']]) ? 
+                                    $relationTranslations[$relation['relationType']] : $relation['relationType'];
+                            ?>
+                            <a href="detail.php?id=<?= $relatedMedia['id'] ?>" class="flex bg-white rounded-lg shadow-sm hover:shadow-md p-3 transition">
+                                <img src="<?= $relatedMedia['coverImage']['medium'] ?>" 
+                                     alt="<?= htmlspecialchars($relatedMedia['title']['romaji']) ?>"
+                                     class="w-16 h-24 object-cover rounded">
+                                <div class="ml-3 flex-1">
+                                    <span class="block text-xs font-medium text-indigo-600 mb-1"><?= $relationType ?></span>
+                                    <h4 class="font-medium text-sm text-gray-800 line-clamp-2">
+                                        <?= htmlspecialchars($relatedMedia['title']['romaji']) ?>
+                                    </h4>
+                                    <span class="text-xs text-gray-500 mt-1 block">
+                                        <?= isset($formatTranslations[$relatedMedia['format']]) ? 
+                                             $formatTranslations[$relatedMedia['format']] : $relatedMedia['format'] ?>
+                                    </span>
+                                </div>
+                            </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -197,7 +467,15 @@ require_once 'includes/header.php';
     <!-- Personnages -->
     <?php if (!empty($anime['characters']['nodes'])): ?>
     <div class="mt-8">
-        <h2 class="text-2xl font-bold mb-6">Personnages</h2>
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold">Personnages</h2>
+            <a href="characters.php?id=<?= $anime['id'] ?>" class="text-indigo-600 hover:text-indigo-800 flex items-center">
+                <span>Voir tous</span>
+                <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
             <?php 
             $characters = $anime['characters']['nodes'];
@@ -206,23 +484,28 @@ require_once 'includes/header.php';
                 $character = $characters[$i];
                 $edge = $edges[$i];
                 $isMain = $edge['role'] === 'MAIN';
-                $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-2 ring-purple-500' : 'bg-white';
+                $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-1 ring-purple-200' : 'bg-white';
                 $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
                 
                 // Pré-parser la description avec Parsedown
-                if ($character['description']) {
+                if (!empty($character['description'])) {
                     $character['description'] = $parsedown->text($character['description']);
                 }
+
+                // Ajouter les informations du doubleur
+                if (!empty($edge['voiceActors'])) {
+                    $character['voiceActor'] = $edge['voiceActors'][0];
+                }
             ?>
-            <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+            <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
                  onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>, '<?= $edge['role'] ?>')">
-                <div class="relative">
+                <div class="relative overflow-hidden">
                     <img src="<?= $character['image']['medium'] ?>" 
                          alt="<?= htmlspecialchars($character['name']['full']) ?>"
-                         class="w-full h-48 object-cover">
+                         class="w-full h-48 object-cover transition duration-300 group-hover:scale-105">
                     <?php if ($isMain): ?>
                     <div class="absolute top-2 right-2">
-                        <span class="px-2 py-1 bg-purple-500 text-white text-xs rounded-full">
+                        <span class="px-2 py-1 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-xs rounded-full shadow-lg">
                             Principal
                         </span>
                     </div>
@@ -243,12 +526,12 @@ require_once 'includes/header.php';
     <?php endif; ?>
 
     <!-- Character Modal -->
-    <div id="characterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+    <div id="characterModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 transition duration-300 opacity-0">
+        <div class="bg-white rounded-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition duration-300">
             <div class="p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-2xl font-bold text-gray-900" id="modalCharacterName"></h3>
-                    <button onclick="closeCharacterModal()" class="text-gray-500 hover:text-gray-700">
+                    <button onclick="closeCharacterModal()" class="text-gray-500 hover:text-gray-700 transition transform hover:rotate-90">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
@@ -256,52 +539,58 @@ require_once 'includes/header.php';
                 </div>
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="w-full md:w-1/3">
-                        <img id="modalCharacterImage" class="w-full rounded-lg" src="" alt="">
+                        <div class="bg-gray-100 rounded-xl p-2">
+                            <img id="modalCharacterImage" class="w-full rounded-lg shadow-inner" src="" alt="">
+                        </div>
+                        <div id="modalVoiceActor" class="mt-4 hidden">
+                            <h4 class="text-lg font-semibold mb-2">Doubleur</h4>
+                            <div class="flex items-center bg-gray-50 p-3 rounded-lg">
+                                <img id="modalVoiceActorImage" class="w-12 h-12 rounded-full object-cover" src="" alt="">
+                                <div class="ml-3">
+                                    <div id="modalVoiceActorName" class="font-medium"></div>
+                                    <div class="text-sm text-gray-500">Japonais</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="flex-1">
                         <div class="grid grid-cols-2 gap-4 mb-6">
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="text-sm text-gray-600">Age</div>
+                                <div class="text-sm text-gray-600">Âge</div>
                                 <div id="modalCharacterAge" class="font-semibold"></div>
                             </div>
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="text-sm text-gray-600">Gender</div>
+                                <div class="text-sm text-gray-600">Genre</div>
                                 <div id="modalCharacterGender" class="font-semibold"></div>
                             </div>
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="text-sm text-gray-600">Blood Type</div>
+                                <div class="text-sm text-gray-600">Groupe sanguin</div>
                                 <div id="modalCharacterBloodType" class="font-semibold"></div>
                             </div>
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="text-sm text-gray-600">Favorites</div>
+                                <div class="text-sm text-gray-600">Favoris</div>
                                 <div id="modalCharacterFavorites" class="font-semibold"></div>
                             </div>
-                            <div id="modalCharacterNativeName" class="bg-gray-50 p-3 rounded-lg hidden">
-                                <div class="text-sm text-gray-600">Nom natif</div>
-                                <div class="font-semibold"></div>
-                            </div>
-                            <div id="modalCharacterBirthday" class="bg-gray-50 p-3 rounded-lg hidden">
-                                <div class="text-sm text-gray-600">Date de naissance</div>
-                                <div class="font-semibold"></div>
-                            </div>
-                            <div id="modalCharacterRole" class="bg-gray-50 p-3 rounded-lg">
-                                <div class="text-sm text-gray-600">Rôle</div>
-                                <div class="flex items-center gap-2">
-                                    <div id="roleIcon"></div>
-                                    <div id="roleName" class="font-semibold"></div>
-                                </div>
-                            </div>
-                            <div id="modalVoiceActor" class="bg-gray-50 p-3 rounded-lg hidden">
-                                <div class="text-sm text-gray-600">Doubleur</div>
-                                <div class="flex items-center gap-2">
-                                    <img id="modalVoiceActorImage" class="w-8 h-8 rounded-full" src="" alt="">
-                                    <div id="modalVoiceActorName" class="font-semibold"></div>
-                                </div>
-                            </div>
                         </div>
+                        
+                        <div id="modalCharacterNativeName" class="bg-indigo-50 p-3 rounded-lg mb-6 hidden">
+                            <div class="text-sm text-indigo-600">Nom original</div>
+                            <div class="font-medium text-gray-800"></div>
+                        </div>
+                        
+                        <div id="modalCharacterBirthday" class="bg-indigo-50 p-3 rounded-lg mb-6 hidden">
+                            <div class="text-sm text-indigo-600">Date de naissance</div>
+                            <div class="font-medium text-gray-800"></div>
+                        </div>
+                        
+                        <div id="modalCharacterRole" class="mb-4 flex items-center">
+                            <div id="roleIcon" class="w-6 h-6 mr-2 text-purple-600"></div>
+                            <div id="roleName" class="font-medium text-lg"></div>
+                        </div>
+                        
                         <div>
                             <h4 class="text-lg font-semibold mb-2">Description</h4>
-                            <p id="modalCharacterDescription" class="text-gray-600 markdown-content"></p>
+                            <div id="modalCharacterDescription" class="text-gray-600 markdown-content bg-gray-50 p-4 rounded-lg overflow-auto max-h-64"></div>
                         </div>
                     </div>
                 </div>
