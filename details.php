@@ -208,6 +208,11 @@ require_once 'includes/header.php';
                 $isMain = $edge['role'] === 'MAIN';
                 $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-2 ring-purple-500' : 'bg-white';
                 $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
+                
+                // Pré-parser la description avec Parsedown
+                if ($character['description']) {
+                    $character['description'] = $parsedown->text($character['description']);
+                }
             ?>
             <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
                  onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>)">
@@ -346,8 +351,7 @@ function showCharacterDetails(character) {
     document.getElementById('modalCharacterGender').textContent = character.gender || 'Unknown';
     document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Unknown';
     document.getElementById('modalCharacterFavorites').textContent = character.favourites || '0';
-    document.getElementById('modalCharacterDescription').innerHTML = 
-        ${character.description ? '<?= $parsedown->text("'+character.description+'") ?>' : 'No description available'};
+    document.getElementById('modalCharacterDescription').innerHTML = character.description || 'No description available';
     
     document.getElementById('characterModal').style.display = 'flex';
 }
