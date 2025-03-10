@@ -185,17 +185,31 @@ function updateFavoriteButton(animeId) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const swiper = new Swiper('.swiper', {
-        effect: 'coverflow',
-        grabCursor: true,
+        slidesPerView: 5,
         centeredSlides: true,
-        slidesPerView: 'auto',
-        initialSlide: 2,
-        coverflowEffect: {
-            rotate: 20,
-            stretch: 0,
-            depth: 350,
-            modifier: 1,
-            slideShadows: true,
+        loop: true,
+        speed: 800,
+        allowTouchMove: true,
+        effect: 'creative',
+        creativeEffect: {
+            prev: {
+                translate: ['-100%', 0, -500],
+                rotate: [0, 0, -15],
+                scale: 0.7,
+            },
+            next: {
+                translate: ['100%', 0, -500],
+                rotate: [0, 0, 15],
+                scale: 0.7,
+            },
+        },
+        on: {
+            init: function () {
+                updateSlides(this);
+            },
+            slideChange: function () {
+                updateSlides(this);
+            },
         },
         navigation: {
             nextEl: '.swiper-button-next',
@@ -203,7 +217,21 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     });
 
-    // Initialize all favorite buttons
+    function updateSlides(swiper) {
+        const slides = swiper.slides;
+        slides.forEach((slide, index) => {
+            const diff = index - swiper.activeIndex;
+            slide.classList.remove('swiper-slide-visible');
+            
+            if (Math.abs(diff) <= 2) {
+                slide.classList.add('swiper-slide-visible');
+                if (diff === -2) slide.classList.add('swiper-slide-prev-prev');
+                if (diff === 2) slide.classList.add('swiper-slide-next-next');
+            }
+        });
+    }
+
+    // Existing favorite initialization code...
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     favorites.forEach(animeId => {
         updateFavoriteButton(animeId);

@@ -11,24 +11,39 @@
     <style>
         body { font-family: 'Electrolize', sans-serif; }
         .carousel-3d {
-            perspective: 1200px;
-        }
-        .swiper-slide {
-            width: 300px !important;
-            margin-right: 30px;
-        }
-        .swiper-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            perspective: 2000px;
+            perspective-origin: 50% 50%;
         }
         .swiper {
             width: 100%;
             padding: 50px;
         }
-        .swiper-3d .swiper-slide-shadow-left,
-        .swiper-3d .swiper-slide-shadow-right {
-            background-image: none;
+        .swiper-slide {
+            width: 300px !important;
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.8s;
+        }
+        .swiper-slide-visible {
+            opacity: 1;
+        }
+        .swiper-slide-active {
+            transform: translateX(0) scale(1);
+            z-index: 2;
+        }
+        .swiper-slide-prev, .swiper-slide-next {
+            z-index: 1;
+        }
+        .swiper-slide-prev {
+            transform: translateX(-30%) scale(0.85);
+        }
+        .swiper-slide-next {
+            transform: translateX(30%) scale(0.85);
+        }
+        .swiper-slide-prev-prev {
+            transform: translateX(-60%) scale(0.7);
+        }
+        .swiper-slide-next-next {
+            transform: translateX(60%) scale(0.7);
         }
     </style>
 </head>
