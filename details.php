@@ -375,12 +375,7 @@ require_once 'includes/header.php';
                         </div>
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
                             <div class="text-2xl font-bold text-indigo-600"><?= $anime['popularity'] ?></div>
-                            <div class="text-sm text-gray-600">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                </svg>
-                                Popularité
-                            </div>
+                            <div class="text-sm text-gray-600">Popularité</div>
                         </div>
                     </div>
 
