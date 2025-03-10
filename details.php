@@ -40,7 +40,7 @@ query ($id: Int) {
                 name
             }
         }
-        characters(sort: [ROLE, RELEVANCE], perPage: 12) {
+        characters(sort: [ROLE, RELEVANCE]) {
             nodes {
                 name {
                     full
