@@ -391,7 +391,7 @@ require_once 'includes/header.php';
                         <h3 class="text-xl font-semibold mb-4">Genres</h3>
                         <div class="flex flex-wrap gap-2">
                             <?php foreach ($anime['genres'] as $genre): ?>
-                            <a href="search.php?genre=<?= urlencode($genre) ?>" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm transition transform hover:scale-105 hover:shadow-md">
+                            <a href="index.php?genre=<?= urlencode($genre) ?>" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-sm transition transform hover:scale-105 hover:shadow-md">
                                 <?= $genre ?>
                             </a>
                             <?php endforeach; ?>
