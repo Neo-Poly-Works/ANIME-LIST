@@ -196,16 +196,30 @@ require_once 'includes/header.php';
             for($i = 0; $i < count($characters); $i++): 
                 $character = $characters[$i];
                 $edge = $edges[$i];
+                $isMain = $edge['role'] === 'MAIN';
+                $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-2 ring-purple-500' : 'bg-white';
+                $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
             ?>
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
-                <img src="<?= $character['image']['medium'] ?>" 
-                     alt="<?= htmlspecialchars($character['name']['full']) ?>"
-                     class="w-full h-48 object-cover">
+            <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+                <div class="relative">
+                    <img src="<?= $character['image']['medium'] ?>" 
+                         alt="<?= htmlspecialchars($character['name']['full']) ?>"
+                         class="w-full h-48 object-cover">
+                    <?php if ($isMain): ?>
+                    <div class="absolute top-2 right-2">
+                        <span class="px-2 py-1 bg-purple-500 text-white text-xs rounded-full">
+                            Principal
+                        </span>
+                    </div>
+                    <?php endif; ?>
+                </div>
                 <div class="p-4">
                     <h3 class="font-semibold text-gray-800 truncate">
                         <?= htmlspecialchars($character['name']['full']) ?>
                     </h3>
-                    <p class="text-sm text-gray-500"><?= $edge['role'] ?></p>
+                    <p class="text-sm <?= $roleClass ?>">
+                        <?= $edge['role'] === 'MAIN' ? 'Personnage Principal' : 'Personnage Secondaire' ?>
+                    </p>
                 </div>
             </div>
             <?php endfor; ?>
