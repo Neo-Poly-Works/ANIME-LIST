@@ -48,8 +48,11 @@ query ($id: Int) {
                 image {
                     medium
                 }
-                role
+                
             }
+          edges {
+            role
+          }
         }
         streamingEpisodes {
             title
