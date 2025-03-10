@@ -26,6 +26,9 @@ require_once 'includes/header.php';
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">Mes Favoris</h1>
 
+    <!-- Store the GraphQL query in a hidden element -->
+    <script type="text/plain" id="graphql-query"><?php echo $query; ?></script>
+
     <div id="favorites-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
         <!-- Sera rempli par JavaScript -->
     </div>
@@ -54,6 +57,7 @@ async function loadFavorites() {
     }
 
     try {
+        const graphqlQuery = document.getElementById('graphql-query').textContent;
         const response = await fetch('https://graphql.anilist.co', {
             method: 'POST',
             headers: {
@@ -61,7 +65,7 @@ async function loadFavorites() {
                 'Accept': 'application/json',
             },
             body: JSON.stringify({
-                query: document.querySelector('#graphql-query').textContent,
+                query: graphqlQuery,
                 variables: { ids: favorites }
             })
         });
@@ -129,13 +133,6 @@ function removeFavorite(animeId) {
 }
 
 document.addEventListener('DOMContentLoaded', loadFavorites);
-
-// Add this hidden element to store the GraphQL query
-document.body.insertAdjacentHTML('beforeend', `
-    <script type="text/plain" id="graphql-query">
-        ${document.querySelector('script[type="text/plain"]')?.innerHTML || ''}
-    </script>
-`);
 </script>
 
 <?php require_once 'includes/footer.php'; ?>
