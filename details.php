@@ -592,25 +592,33 @@ require_once 'includes/header.php';
 
     <!-- Episodes -->
     <?php if (!empty($anime['streamingEpisodes'])): ?>
-        <div class="mt-8">
-            <h2 class="text-2xl font-bold mb-6">Episodes disponibles</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <?php foreach ($anime['streamingEpisodes'] as $episode): ?>
-                    <a href="<?= $episode['url'] ?>" target="_blank"
-                        class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-6">Episodes disponibles (<?= count($anime['streamingEpisodes']) ?>)</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <?php foreach ($anime['streamingEpisodes'] as $episode): ?>
+                <a href="<?= $episode['url'] ?>" target="_blank"
+                    class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow group">
+                    <div class="relative">
                         <img src="<?= $episode['thumbnail'] ?>"
                             alt="<?= htmlspecialchars($episode['title']) ?>"
-                            class="w-full h-32 object-cover">
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-800 text-sm">
-                                <?= htmlspecialchars($episode['title']) ?>
-                            </h3>
+                            class="w-full h-32 object-cover transition duration-300 group-hover:scale-105">
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                        <div class="absolute bottom-2 right-2">
+                            <span class="px-2 py-1 bg-white/90 text-gray-900 text-xs rounded-full">
+                                <?= $episode['site'] ?>
+                            </span>
                         </div>
-                    </a>
-                <?php endforeach; ?>
-            </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-medium text-gray-800 text-sm line-clamp-2">
+                            <?= htmlspecialchars($episode['title']) ?>
+                        </h3>
+                    </div>
+                </a>
+            <?php endforeach; ?>
         </div>
-    <?php endif; ?>
+    </div>
+<?php endif; ?>
 </div>
 
 <script>
