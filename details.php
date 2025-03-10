@@ -215,7 +215,7 @@ require_once 'includes/header.php';
                 }
             ?>
             <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                 onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>)">
+                 onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>, '<?= $edge['role'] ?>')">
                 <div class="relative">
                     <img src="<?= $character['image']['medium'] ?>" 
                          alt="<?= htmlspecialchars($character['name']['full']) ?>"
@@ -275,6 +275,28 @@ require_once 'includes/header.php';
                             <div class="bg-gray-50 p-3 rounded-lg">
                                 <div class="text-sm text-gray-600">Favorites</div>
                                 <div id="modalCharacterFavorites" class="font-semibold"></div>
+                            </div>
+                            <div id="modalCharacterNativeName" class="bg-gray-50 p-3 rounded-lg hidden">
+                                <div class="text-sm text-gray-600">Nom natif</div>
+                                <div class="font-semibold"></div>
+                            </div>
+                            <div id="modalCharacterBirthday" class="bg-gray-50 p-3 rounded-lg hidden">
+                                <div class="text-sm text-gray-600">Date de naissance</div>
+                                <div class="font-semibold"></div>
+                            </div>
+                            <div id="modalCharacterRole" class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-600">Rôle</div>
+                                <div class="flex items-center gap-2">
+                                    <div id="roleIcon"></div>
+                                    <div id="roleName" class="font-semibold"></div>
+                                </div>
+                            </div>
+                            <div id="modalVoiceActor" class="bg-gray-50 p-3 rounded-lg hidden">
+                                <div class="text-sm text-gray-600">Doubleur</div>
+                                <div class="flex items-center gap-2">
+                                    <img id="modalVoiceActorImage" class="w-8 h-8 rounded-full" src="" alt="">
+                                    <div id="modalVoiceActorName" class="font-semibold"></div>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -344,20 +366,97 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFavoriteButton(animeId);
 });
 
-function showCharacterDetails(character) {
-    document.getElementById('modalCharacterName').textContent = character.name.full;
-    document.getElementById('modalCharacterImage').src = character.image.medium;
-    document.getElementById('modalCharacterAge').textContent = character.age || 'Unknown';
-    document.getElementById('modalCharacterGender').textContent = character.gender || 'Unknown';
-    document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Unknown';
-    document.getElementById('modalCharacterFavorites').textContent = character.favourites || '0';
-    document.getElementById('modalCharacterDescription').innerHTML = character.description || 'No description available';
+function showCharacterDetails(character, role) {
+    const modal = document.getElementById('characterModal');
+    const modalContent = modal.querySelector('.bg-white');
     
-    document.getElementById('characterModal').style.display = 'flex';
+    // Informations de base
+    document.getElementById('modalCharacterName').textContent = character.name.full;
+    document.getElementById('modalCharacterImage').src = character.image.large || character.image.medium;
+    document.getElementById('modalCharacterAge').textContent = character.age || 'Inconnu';
+    document.getElementById('modalCharacterGender').textContent = character.gender || 'Inconnu';
+    document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Inconnu';
+    document.getElementById('modalCharacterFavorites').textContent = character.favourites.toLocaleString() || '0';
+
+    // Nom natif
+    const nativeNameDiv = document.getElementById('modalCharacterNativeName');
+    if (character.name.native) {
+        nativeNameDiv.querySelector('div:last-child').textContent = character.name.native;
+        nativeNameDiv.classList.remove('hidden');
+    } else {
+        nativeNameDiv.classList.add('hidden');
+    }
+
+    // Date de naissance
+    const birthdayDiv = document.getElementById('modalCharacterBirthday');
+    if (character.dateOfBirth && character.dateOfBirth.month) {
+        const date = new Date(
+            character.dateOfBirth.year || 2000, 
+            character.dateOfBirth.month - 1, 
+            character.dateOfBirth.day || 1
+        );
+        const options = { day: 'numeric', month: 'long' };
+        if (character.dateOfBirth.year) options.year = 'numeric';
+        birthdayDiv.querySelector('div:last-child').textContent = date.toLocaleDateString('fr-FR', options);
+        birthdayDiv.classList.remove('hidden');
+    } else {
+        birthdayDiv.classList.add('hidden');
+    }
+
+    // Rôle
+    const roleDiv = document.getElementById('modalCharacterRole');
+    const roleIcon = document.getElementById('roleIcon');
+    const roleName = document.getElementById('roleName');
+    
+    if (role === 'MAIN') {
+        roleIcon.innerHTML = `
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>`;
+        roleName.textContent = 'Personnage Principal';
+    } else {
+        roleIcon.innerHTML = `
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"/>
+            </svg>`;
+        roleName.textContent = 'Personnage Secondaire';
+    }
+
+    // Doubleur
+    const voiceActorDiv = document.getElementById('modalVoiceActor');
+    if (character.voiceActor) {
+        document.getElementById('modalVoiceActorName').textContent = character.voiceActor.name.full;
+        document.getElementById('modalVoiceActorImage').src = character.voiceActor.image.medium;
+        voiceActorDiv.classList.remove('hidden');
+    } else {
+        voiceActorDiv.classList.add('hidden');
+    }
+
+    // Description
+    document.getElementById('modalCharacterDescription').innerHTML = character.description || 'Aucune description disponible.';
+
+    // Afficher la modal avec animation
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+        modalContent.classList.add('scale-100');
+    }, 10);
 }
 
 function closeCharacterModal() {
-    document.getElementById('characterModal').style.display = 'none';
+    const modal = document.getElementById('characterModal');
+    const modalContent = modal.querySelector('.bg-white');
+    
+    modal.classList.add('opacity-0');
+    modalContent.classList.remove('scale-100');
+    modalContent.classList.add('scale-95');
+    
+    setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+    }, 300);
 }
 
 // Close modal when clicking outside
