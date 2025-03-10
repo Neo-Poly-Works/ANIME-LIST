@@ -57,7 +57,7 @@ query ($id: Int) {
                 isAnimationStudio
             }
         }
-        characters(sort: [ROLE, RELEVANCE], perPage: 1000) {
+        characters(sort: [ROLE, RELEVANCE], perPage: 8) {
             nodes {
                 name {
                     full
