@@ -71,9 +71,9 @@ require_once 'includes/header.php';
         </div>
 
         <!-- Liste des animes -->
-        <div class="flex-1 overflow-x-hidden"> <!-- Ajout de overflow-x-hidden -->
-            <div class="carousel-3d relative h-[600px]"> <!-- Suppression de overflow-hidden -->
-                <div class="swiper w-full"> <!-- Ajout de w-full -->
+        <div class="flex-1 overflow-x-hidden flex-start">
+            <div class="carousel-3d relative h-[600px]">
+                <div class="swiper w-full">
                     <div class="swiper-wrapper">
                         <?php foreach ($animes as $anime): ?>
                         <div class="swiper-slide" style="width: 300px;">
