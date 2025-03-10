@@ -149,7 +149,7 @@
                 <a href="index.php" class="text-2xl font-bold text-indigo-600">
                     Anime<span class="text-purple-600">List</span>
                 </a>
-                <form action="search.php" method="GET" class="hidden md:flex items-center flex-1 max-w-2xl mx-8">
+                <form action="search.php" method="GET" class="flex items-center flex-1 max-w-2xl mx-8">
                     <input type="text" name="q" placeholder="Rechercher un anime..."
                         class="w-full px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:outline-none"
                         required>
