@@ -347,7 +347,7 @@ function showCharacterDetails(character) {
     document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Unknown';
     document.getElementById('modalCharacterFavorites').textContent = character.favourites || '0';
     document.getElementById('modalCharacterDescription').innerHTML = 
-        `${character.description ? <?php echo json_encode($parsedown->text('${character.description}')); ?> : 'No description available'}`;
+        ${character.description ? '<?= $parsedown->text("'+character.description+'") ?>' : 'No description available'};
     
     document.getElementById('characterModal').style.display = 'flex';
 }
