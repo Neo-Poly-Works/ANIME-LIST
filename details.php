@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/includes/api.php';
+require_once 'Parsedown.php';
+
+use Markdown\Parsedown;
+
+$parsedown = new Parsedown();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
@@ -139,8 +144,8 @@ require_once 'includes/header.php';
                     <!-- Synopsis -->
                     <div class="prose max-w-none mb-8">
                         <h3 class="text-xl font-semibold mb-4">Synopsis</h3>
-                        <p class="text-gray-600 leading-relaxed">
-                            <?= $anime['description'] ?>
+                        <p class="text-gray-600 leading-relaxed markdown-content">
+                            <?= $parsedown->text($anime['description']); ?>
                         </p>
                     </div>
 
@@ -269,7 +274,7 @@ require_once 'includes/header.php';
                         </div>
                         <div>
                             <h4 class="text-lg font-semibold mb-2">Description</h4>
-                            <p id="modalCharacterDescription" class="text-gray-600"></p>
+                            <p id="modalCharacterDescription" class="text-gray-600 markdown-content"></p>
                         </div>
                     </div>
                 </div>
@@ -341,7 +346,8 @@ function showCharacterDetails(character) {
     document.getElementById('modalCharacterGender').textContent = character.gender || 'Unknown';
     document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Unknown';
     document.getElementById('modalCharacterFavorites').textContent = character.favourites || '0';
-    document.getElementById('modalCharacterDescription').textContent = character.description || 'No description available';
+    document.getElementById('modalCharacterDescription').innerHTML = 
+        `${character.description ? <?php echo json_encode($parsedown->text('${character.description}')); ?> : 'No description available'}`;
     
     document.getElementById('characterModal').style.display = 'flex';
 }
