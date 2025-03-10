@@ -89,8 +89,8 @@ require_once 'includes/header.php';
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next rounded-lg bg-gray-300 opacity-80 p-4"></div>
+                    <div class="swiper-button-prev rounded-lg bg-gray-300 opacity-80 p-4"></div>
                 </div>
             </div>
         <?php else: ?>
