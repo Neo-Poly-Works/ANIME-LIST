@@ -11,12 +11,24 @@
     <style>
         body { font-family: 'Electrolize', sans-serif; }
         .carousel-3d {
-            perspective: 1000px;
-            transform-style: preserve-3d;
+            perspective: 1200px;
         }
-        .carousel-item {
-            transition: all 0.5s ease;
-            transform-origin: center center -400px;
+        .swiper-slide {
+            width: 300px !important;
+            margin-right: 30px;
+        }
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper {
+            width: 100%;
+            padding: 50px;
+        }
+        .swiper-3d .swiper-slide-shadow-left,
+        .swiper-3d .swiper-slide-shadow-right {
+            background-image: none;
         }
     </style>
 </head>

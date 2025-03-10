@@ -76,12 +76,12 @@ require_once 'includes/header.php';
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         <?php foreach ($animes as $anime): ?>
-                        <div class="swiper-slide">
+                        <div class="swiper-slide" style="width: 300px;">
                             <div class="carousel-item group bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300">
                                 <div class="relative">
                                     <img src="<?= $anime['coverImage']['large']; ?>" 
                                          alt="<?= htmlspecialchars($anime['title']['romaji']); ?>"
-                                         class="w-full h-[400px] object-contain bg-black">
+                                         class="w-[300px] h-[400px] object-cover bg-black">
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         <div class="absolute top-4 right-4">
                                             <button onclick="toggleFavorite(<?= $anime['id'] ?>, event)" 
@@ -189,10 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
         grabCursor: true,
         centeredSlides: true,
         slidesPerView: 'auto',
+        initialSlide: 2,
         coverflowEffect: {
-            rotate: 50,
+            rotate: 20,
             stretch: 0,
-            depth: 100,
+            depth: 350,
             modifier: 1,
             slideShadows: true,
         },
