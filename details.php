@@ -151,6 +151,35 @@ require_once 'includes/header.php';
                             <?php endforeach; ?>
                         </div>
                     </div>
+
+                    <!-- Tags -->
+                    <?php if (!empty($anime['tags'])): ?>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">Tags</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <?php foreach ($anime['tags'] as $tag): ?>
+                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm flex items-center">
+                                <?= $tag['name'] ?>
+                                <span class="ml-2 text-xs text-gray-500"><?= $tag['rank'] ?>%</span>
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Studios -->
+                    <?php if (!empty($anime['studios']['nodes'])): ?>
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold mb-4">Studios</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <?php foreach ($anime['studios']['nodes'] as $studio): ?>
+                            <span class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">
+                                <?= $studio['name'] ?>
+                            </span>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -161,7 +190,7 @@ require_once 'includes/header.php';
     <div class="mt-8">
         <h2 class="text-2xl font-bold mb-6">Personnages</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            <?php foreach ($anime['characters']['nodes'] as $character): ?>
+            <?php foreach (array_combine($anime['characters']['nodes'], $anime['characters']['edges']) as $character => $edge): ?>
             <div class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
                 <img src="<?= $character['image']['medium'] ?>" 
                      alt="<?= htmlspecialchars($character['name']['full']) ?>"
@@ -170,9 +199,31 @@ require_once 'includes/header.php';
                     <h3 class="font-semibold text-gray-800 truncate">
                         <?= htmlspecialchars($character['name']['full']) ?>
                     </h3>
-                    <p class="text-sm text-gray-500"><?= $character['role'] ?></p>
+                    <p class="text-sm text-gray-500"><?= $edge['role'] ?></p>
                 </div>
             </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Episodes -->
+    <?php if (!empty($anime['streamingEpisodes'])): ?>
+    <div class="mt-8">
+        <h2 class="text-2xl font-bold mb-6">Episodes disponibles</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <?php foreach ($anime['streamingEpisodes'] as $episode): ?>
+            <a href="<?= $episode['url'] ?>" target="_blank" 
+               class="bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+                <img src="<?= $episode['thumbnail'] ?>" 
+                     alt="<?= htmlspecialchars($episode['title']) ?>"
+                     class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-800 text-sm">
+                        <?= htmlspecialchars($episode['title']) ?>
+                    </h3>
+                </div>
+            </a>
             <?php endforeach; ?>
         </div>
     </div>
