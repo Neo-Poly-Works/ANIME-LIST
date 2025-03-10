@@ -136,7 +136,7 @@ require_once 'includes/header.php';
                     <div class="prose max-w-none mb-8">
                         <h3 class="text-xl font-semibold mb-4">Synopsis</h3>
                         <p class="text-gray-600 leading-relaxed">
-                            <?= nl2br(htmlspecialchars($anime['description'])) ?>
+                            <?= $anime['description'] ?>
                         </p>
                     </div>
 
