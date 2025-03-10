@@ -48,11 +48,15 @@ query ($id: Int) {
                 image {
                     medium
                 }
-                
+                age
+                gender
+                description
+                bloodType
+                favourites
             }
-          edges {
-            role
-          }
+            edges {
+                role
+            }
         }
         streamingEpisodes {
             title
@@ -200,7 +204,8 @@ require_once 'includes/header.php';
                 $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-2 ring-purple-500' : 'bg-white';
                 $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
             ?>
-            <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow">
+            <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                 onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>)">
                 <div class="relative">
                     <img src="<?= $character['image']['medium'] ?>" 
                          alt="<?= htmlspecialchars($character['name']['full']) ?>"
@@ -226,6 +231,51 @@ require_once 'includes/header.php';
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- Character Modal -->
+    <div id="characterModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-2xl font-bold text-gray-900" id="modalCharacterName"></h3>
+                    <button onclick="closeCharacterModal()" class="text-gray-500 hover:text-gray-700">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3">
+                        <img id="modalCharacterImage" class="w-full rounded-lg" src="" alt="">
+                    </div>
+                    <div class="flex-1">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-600">Age</div>
+                                <div id="modalCharacterAge" class="font-semibold"></div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-600">Gender</div>
+                                <div id="modalCharacterGender" class="font-semibold"></div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-600">Blood Type</div>
+                                <div id="modalCharacterBloodType" class="font-semibold"></div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-600">Favorites</div>
+                                <div id="modalCharacterFavorites" class="font-semibold"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">Description</h4>
+                            <p id="modalCharacterDescription" class="text-gray-600"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Episodes -->
     <?php if (!empty($anime['streamingEpisodes'])): ?>
@@ -282,6 +332,29 @@ function updateFavoriteButton(animeId) {
 document.addEventListener('DOMContentLoaded', () => {
     const animeId = <?= $id ?>;
     updateFavoriteButton(animeId);
+});
+
+function showCharacterDetails(character) {
+    document.getElementById('modalCharacterName').textContent = character.name.full;
+    document.getElementById('modalCharacterImage').src = character.image.medium;
+    document.getElementById('modalCharacterAge').textContent = character.age || 'Unknown';
+    document.getElementById('modalCharacterGender').textContent = character.gender || 'Unknown';
+    document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Unknown';
+    document.getElementById('modalCharacterFavorites').textContent = character.favourites || '0';
+    document.getElementById('modalCharacterDescription').textContent = character.description || 'No description available';
+    
+    document.getElementById('characterModal').style.display = 'flex';
+}
+
+function closeCharacterModal() {
+    document.getElementById('characterModal').style.display = 'none';
+}
+
+// Close modal when clicking outside
+document.getElementById('characterModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeCharacterModal();
+    }
 });
 </script>
 
