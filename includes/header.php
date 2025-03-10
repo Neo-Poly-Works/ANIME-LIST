@@ -4,29 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Primary Meta Tags -->
-    <title>AniList Explorer - Découvrez et explorez vos animes préférés</title>
-    <meta name="title" content="AniList Explorer - Découvrez et explorez vos animes préférés">
+    <title>AnimeList - Découvrez et explorez vos animes préférés</title>
+    <meta name="title" content="AnimeList - Découvrez et explorez vos animes préférés">
     <meta name="description" content="Explorez une vaste collection d'animes, découvrez de nouvelles séries, gérez vos favoris et restez informé des dernières sorties. La meilleure plateforme pour les fans d'anime.">
     <meta name="keywords" content="anime, manga, japon, animation japonaise, streaming anime, séries animées, AniList, explorer anime">
-    <meta name="author" content="AniList Explorer">
+    <meta name="author" content="AnimeList">
     <meta name="robots" content="index, follow">
     
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://anime-list.neopolyworks.fr">
-    <meta property="og:title" content="AniList Explorer - Découvrez et explorez vos animes préférés">
+    <meta property="og:title" content="AnimeList - Découvrez et explorez vos animes préférés">
     <meta property="og:description" content="Explorez une vaste collection d'animes, découvrez de nouvelles séries, gérez vos favoris et restez informé des dernières sorties.">
     <meta property="og:image" content="assets/images/og-image.jpg">
 
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://anime-list.neopolyworks.fr">
-    <meta property="twitter:title" content="AniList Explorer - Découvrez et explorez vos animes préférés">
+    <meta property="twitter:title" content="AnimeList - Découvrez et explorez vos animes préférés">
     <meta property="twitter:description" content="Explorez une vaste collection d'animes, découvrez de nouvelles séries, gérez vos favoris et restez informé des dernières sorties.">
     <meta property="twitter:image" content="assets/images/og-image.jpg">
 
-    <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
@@ -35,7 +31,6 @@
     <meta name="msapplication-TileColor" content="#6366f1">
     <meta name="theme-color" content="#6366f1">
 
-    <!-- Styles et Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Electrolize:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -152,7 +147,7 @@
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-16">
                 <a href="index.php" class="text-2xl font-bold text-indigo-600">
-                    AniList<span class="text-purple-600">Explorer</span>
+                    Anime<span class="text-purple-600">List</span>
                 </a>
                 <form action="search.php" method="GET" class="hidden md:flex items-center flex-1 max-w-2xl mx-8">
                     <input type="text" name="q" placeholder="Rechercher un anime..."

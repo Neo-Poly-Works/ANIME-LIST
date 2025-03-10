@@ -26,11 +26,10 @@ require_once 'includes/header.php';
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold mb-8">Mes Favoris</h1>
 
-    <!-- Store the GraphQL query in a hidden element -->
     <script type="text/plain" id="graphql-query"><?php echo $query; ?></script>
 
     <div id="favorites-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-        <!-- Sera rempli par JavaScript -->
+
     </div>
 
     <div id="empty-state" class="hidden text-center py-12">

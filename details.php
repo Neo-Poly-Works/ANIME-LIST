@@ -184,7 +184,6 @@ $status = isset($statusTranslations[$anime['status']]) ? $statusTranslations[$an
 $format = isset($formatTranslations[$anime['format']]) ? $formatTranslations[$anime['format']] : $anime['format'];
 $season = isset($seasonTranslations[$anime['season']]) ? $seasonTranslations[$anime['season']] : $anime['season'];
 
-// Fonction pour formater les dates
 function formatDate($date)
 {
     if (!$date['year']) return 'Inconnue';
@@ -198,7 +197,6 @@ function formatDate($date)
     }
 }
 
-// Période de diffusion
 $startDate = formatDate($anime['startDate']);
 $endDate = formatDate($anime['endDate']);
 $airing = $startDate . ($anime['status'] === 'FINISHED' ? ' au ' . $endDate : '');
@@ -207,7 +205,6 @@ require_once 'includes/header.php';
 ?>
 
 <div class="container mx-auto px-4 py-8">
-    <!-- Système de navigation (fil d'Ariane) -->
     <nav class="text-sm mb-6">
         <ol class="flex items-center space-x-2">
             <li><a href="index.php" class="text-indigo-600 hover:text-indigo-800">Accueil</a></li>
@@ -227,7 +224,6 @@ require_once 'includes/header.php';
     </nav>
 
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <!-- Bannière avec overlay -->
         <?php if ($anime['bannerImage']): ?>
             <div class="h-80 md:h-96 relative">
                 <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('<?= $anime['bannerImage'] ?>');"></div>
@@ -237,7 +233,6 @@ require_once 'includes/header.php';
 
         <div class="relative <?= $anime['bannerImage'] ? '-mt-48' : '' ?> px-6 py-8">
             <div class="flex flex-col md:flex-row gap-8">
-                <!-- Image de couverture -->
                 <div class="md:w-1/3 lg:w-1/4 flex-shrink-0">
                     <div class="relative group rounded-lg overflow-hidden shadow-2xl">
                         <img src="<?= $anime['coverImage']['extraLarge'] ?>"
@@ -256,7 +251,6 @@ require_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Actions -->
                     <div class="flex flex-col space-y-3 mt-4">
                         <button onclick="toggleFavorite(<?= $anime['id'] ?>)" id="watchlistBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition flex items-center justify-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -266,7 +260,6 @@ require_once 'includes/header.php';
                         </button>
                     </div>
 
-                    <!-- Informations complémentaires -->
                     <div class="bg-gray-50 rounded-xl p-4 mt-4">
                         <h3 class="text-lg font-semibold mb-3">Informations</h3>
                         <div class="space-y-2 text-sm">
@@ -303,7 +296,6 @@ require_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Studios -->
                     <?php if (!empty($anime['studios']['nodes'])): ?>
                         <div class="bg-gray-50 rounded-xl p-4 mt-4">
                             <h3 class="text-lg font-semibold mb-3">Studios</h3>
@@ -328,7 +320,6 @@ require_once 'includes/header.php';
                     <?php endif; ?>
                 </div>
 
-                <!-- Informations principales -->
                 <div class="flex-1">
                     <h1 class="text-4xl font-bold text-gray-900 mb-2">
                         <?= htmlspecialchars($anime['title']['romaji']) ?>
@@ -344,7 +335,6 @@ require_once 'includes/header.php';
                         </h3>
                     <?php endif; ?>
 
-                    <!-- Stats -->
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-4 rounded-xl text-center">
                             <div class="text-2xl font-bold text-indigo-600">
@@ -370,7 +360,6 @@ require_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Synopsis -->
                     <div class="prose max-w-none mb-8">
                         <h3 class="text-xl font-semibold mb-4">Synopsis</h3>
                         <div class="text-gray-600 leading-relaxed markdown-content bg-gray-50 p-6 rounded-xl">
@@ -378,7 +367,6 @@ require_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Genres -->
                     <div class="mb-8">
                         <h3 class="text-xl font-semibold mb-4">Genres</h3>
                         <div class="flex flex-wrap gap-2">
@@ -390,22 +378,18 @@ require_once 'includes/header.php';
                         </div>
                     </div>
 
-                    <!-- Tags -->
                     <?php if (!empty($anime['tags'])): ?>
                         <div class="mb-8">
                             <h3 class="text-xl font-semibold mb-4">Tags</h3>
                             <div class="flex flex-wrap gap-2">
                                 <?php
-                                // Trier les tags par rang
                                 usort($anime['tags'], function ($a, $b) {
                                     return $b['rank'] - $a['rank'];
                                 });
 
                                 foreach ($anime['tags'] as $tag):
-                                    // Définir la couleur de fond en fonction du rang
                                     $intensity = intval($tag['rank'] / 10);
                                     $bgClass = "bg-indigo-{$intensity}0";
-                                    // Utiliser une couleur par défaut si l'intensité est trop faible
                                     if ($intensity < 3) {
                                         $bgClass = "bg-gray-100";
                                         $textClass = "text-gray-700";
@@ -422,7 +406,6 @@ require_once 'includes/header.php';
                         </div>
                     <?php endif; ?>
 
-                    <!-- Relations -->
                     <?php if (!empty($anime['relations']['edges'])): ?>
                         <div class="mb-8">
                             <h3 class="text-xl font-semibold mb-4">Œuvres liées</h3>
@@ -456,7 +439,6 @@ require_once 'includes/header.php';
         </div>
     </div>
 
-    <!-- Personnages -->
     <?php if (!empty($anime['characters']['nodes'])): ?>
         <div class="mt-8">
             <div class="flex justify-between items-center mb-6">
@@ -479,12 +461,10 @@ require_once 'includes/header.php';
                     $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-1 ring-purple-200' : 'bg-white';
                     $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
 
-                    // Pré-parser la description avec Parsedown
                     if (!empty($character['description'])) {
                         $character['description'] = $parsedown->text($character['description']);
                     }
 
-                    // Ajouter les informations du doubleur
                     if (!empty($edge['voiceActors'])) {
                         $character['voiceActor'] = $edge['voiceActors'][0];
                     }
@@ -517,7 +497,6 @@ require_once 'includes/header.php';
         </div>
     <?php endif; ?>
 
-    <!-- Character Modal -->
     <div id="characterModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 transition duration-300 opacity-0">
         <div class="bg-white rounded-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition duration-300">
             <div class="p-6">
@@ -590,7 +569,6 @@ require_once 'includes/header.php';
         </div>
     </div>
 
-    <!-- Episodes -->
     <?php if (!empty($anime['streamingEpisodes'])): ?>
     <div class="mt-8">
         <h2 class="text-2xl font-bold mb-6">Episodes disponibles (<?= count($anime['streamingEpisodes']) ?>)</h2>
@@ -649,7 +627,6 @@ require_once 'includes/header.php';
         }
     }
 
-    // Initialize favorite button state
     document.addEventListener('DOMContentLoaded', () => {
         const animeId = <?= $id ?>;
         updateFavoriteButton(animeId);
@@ -659,7 +636,6 @@ require_once 'includes/header.php';
         const modal = document.getElementById('characterModal');
         const modalContent = modal.querySelector('.bg-white');
 
-        // Informations de base
         document.getElementById('modalCharacterName').textContent = character.name.full;
         document.getElementById('modalCharacterImage').src = character.image.large || character.image.medium;
         document.getElementById('modalCharacterAge').textContent = character.age || 'Inconnu';
@@ -667,7 +643,6 @@ require_once 'includes/header.php';
         document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Inconnu';
         document.getElementById('modalCharacterFavorites').textContent = character.favourites.toLocaleString() || '0';
 
-        // Nom natif
         const nativeNameDiv = document.getElementById('modalCharacterNativeName');
         if (character.name.native) {
             nativeNameDiv.querySelector('div:last-child').textContent = character.name.native;
@@ -676,7 +651,6 @@ require_once 'includes/header.php';
             nativeNameDiv.classList.add('hidden');
         }
 
-        // Date de naissance
         const birthdayDiv = document.getElementById('modalCharacterBirthday');
         if (character.dateOfBirth && character.dateOfBirth.month) {
             const date = new Date(
@@ -695,7 +669,6 @@ require_once 'includes/header.php';
             birthdayDiv.classList.add('hidden');
         }
 
-        // Rôle
         const roleDiv = document.getElementById('modalCharacterRole');
         const roleIcon = document.getElementById('roleIcon');
         const roleName = document.getElementById('roleName');
@@ -714,7 +687,6 @@ require_once 'includes/header.php';
             roleName.textContent = 'Personnage Secondaire';
         }
 
-        // Doubleur
         const voiceActorDiv = document.getElementById('modalVoiceActor');
         if (character.voiceActor) {
             document.getElementById('modalVoiceActorName').textContent = character.voiceActor.name.full;
@@ -724,10 +696,8 @@ require_once 'includes/header.php';
             voiceActorDiv.classList.add('hidden');
         }
 
-        // Description
         document.getElementById('modalCharacterDescription').innerHTML = character.description || 'Aucune description disponible.';
 
-        // Afficher la modal avec animation
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         setTimeout(() => {
@@ -751,7 +721,6 @@ require_once 'includes/header.php';
         }, 300);
     }
 
-    // Close modal when clicking outside
     document.getElementById('characterModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeCharacterModal();

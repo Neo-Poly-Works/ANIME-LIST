@@ -71,7 +71,6 @@ require_once 'includes/header.php';
 ?>
 
 <div class="container mx-auto px-4 py-8">
-    <!-- Fil d'Ariane -->
     <nav class="text-sm mb-6">
         <ol class="flex items-center space-x-2">
             <li><a href="index.php" class="text-indigo-600 hover:text-indigo-800">Accueil</a></li>
@@ -104,6 +103,10 @@ require_once 'includes/header.php';
             $isMain = $edge['role'] === 'MAIN';
             $cardClass = $isMain ? 'bg-gradient-to-br from-indigo-50 to-purple-50 ring-1 ring-purple-200' : 'bg-white';
             $roleClass = $isMain ? 'text-purple-600 font-medium' : 'text-gray-500';
+
+            if (!empty($character['description'])) {
+                $character['description'] = $parsedown->text($character['description']);
+            }
         ?>
             <div class="<?= $cardClass ?> rounded-xl shadow-sm overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
                 onclick="showCharacterDetails(<?= htmlspecialchars(json_encode($character)) ?>, '<?= $edge['role'] ?>')">
@@ -132,7 +135,6 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<!-- Réutiliser la même modale que dans details.php -->
 <div id="characterModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50 transition duration-300 opacity-0">
         <div class="bg-white rounded-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition duration-300">
             <div class="p-6">
@@ -206,12 +208,10 @@ require_once 'includes/header.php';
     </div>
 
 <script>
-    // Réutiliser les mêmes fonctions JavaScript que dans details.php
     function showCharacterDetails(character, role) {
         const modal = document.getElementById('characterModal');
         const modalContent = modal.querySelector('.bg-white');
 
-        // Informations de base
         document.getElementById('modalCharacterName').textContent = character.name.full;
         document.getElementById('modalCharacterImage').src = character.image.large || character.image.medium;
         document.getElementById('modalCharacterAge').textContent = character.age || 'Inconnu';
@@ -219,7 +219,6 @@ require_once 'includes/header.php';
         document.getElementById('modalCharacterBloodType').textContent = character.bloodType || 'Inconnu';
         document.getElementById('modalCharacterFavorites').textContent = character.favourites.toLocaleString() || '0';
 
-        // Nom natif
         const nativeNameDiv = document.getElementById('modalCharacterNativeName');
         if (character.name.native) {
             nativeNameDiv.querySelector('div:last-child').textContent = character.name.native;
@@ -228,7 +227,6 @@ require_once 'includes/header.php';
             nativeNameDiv.classList.add('hidden');
         }
 
-        // Date de naissance
         const birthdayDiv = document.getElementById('modalCharacterBirthday');
         if (character.dateOfBirth && character.dateOfBirth.month) {
             const date = new Date(
@@ -247,7 +245,6 @@ require_once 'includes/header.php';
             birthdayDiv.classList.add('hidden');
         }
 
-        // Rôle
         const roleDiv = document.getElementById('modalCharacterRole');
         const roleIcon = document.getElementById('roleIcon');
         const roleName = document.getElementById('roleName');
@@ -266,7 +263,6 @@ require_once 'includes/header.php';
             roleName.textContent = 'Personnage Secondaire';
         }
 
-        // Doubleur
         const voiceActorDiv = document.getElementById('modalVoiceActor');
         if (character.voiceActor) {
             document.getElementById('modalVoiceActorName').textContent = character.voiceActor.name.full;
@@ -276,10 +272,8 @@ require_once 'includes/header.php';
             voiceActorDiv.classList.add('hidden');
         }
 
-        // Description
         document.getElementById('modalCharacterDescription').innerHTML = character.description || 'Aucune description disponible.';
 
-        // Afficher la modal avec animation
         modal.classList.remove('hidden');
         modal.classList.add('flex');
         setTimeout(() => {
@@ -304,7 +298,6 @@ require_once 'includes/header.php';
     }
 
 
-    // Close modal when clicking outside
     document.getElementById('characterModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeCharacterModal();

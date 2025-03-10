@@ -49,7 +49,6 @@ require_once 'includes/header.php';
 
 <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row gap-6">
-        <!-- Filtres -->
         <div class="w-full md:w-64 bg-white p-6 rounded-xl shadow-sm">
             <h2 class="text-xl font-bold mb-6 text-gray-800">Filtres</h2>
             <form action="" method="GET">
@@ -70,7 +69,6 @@ require_once 'includes/header.php';
             </form>
         </div>
 
-        <!-- Liste des animes -->
         <div class="flex-1 overflow-x-hidden flex-start">
             <div class="carousel-3d relative h-[600px]">
                 <div class="swiper w-full">
@@ -130,7 +128,6 @@ require_once 'includes/header.php';
                 </div>
             </div>
 
-            <!-- Pagination -->
             <div class="mt-8 flex justify-center gap-2">
                 <?php if ($pageInfo['currentPage'] > 1): ?>
                     <a href="?page=<?= $pageInfo['currentPage'] - 1 ?>&genre=<?= $genre ?>" 
@@ -201,12 +198,10 @@ document.addEventListener('DOMContentLoaded', () => {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
         },
-        // Ajout de ces paramètres
         observer: true,
         observeParents: true
     });
 
-    // Initialize all favorite buttons
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     favorites.forEach(animeId => {
         updateFavoriteButton(animeId);

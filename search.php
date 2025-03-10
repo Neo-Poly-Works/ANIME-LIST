@@ -143,7 +143,6 @@ function updateFavoriteButton(animeId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Swiper
     const swiper = new Swiper('.swiper', {
         effect: 'coverflow',
         grabCursor: true,
@@ -165,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observeParents: true
     });
 
-    // Initialize favorite buttons
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     favorites.forEach(animeId => {
         updateFavoriteButton(animeId);
