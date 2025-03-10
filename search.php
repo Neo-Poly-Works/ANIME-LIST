@@ -35,21 +35,6 @@ require_once 'includes/header.php';
 
 <div class="container mx-auto px-4">
     <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <form action="" method="GET" class="flex gap-2">
-                <input type="text" 
-                       name="q" 
-                       value="<?= htmlspecialchars($search) ?>"
-                       placeholder="Rechercher un anime..." 
-                       class="flex-1 px-4 py-2 rounded-lg border-2 border-indigo-100 focus:border-indigo-300 focus:outline-none"
-                       required>
-                <button type="submit" 
-                        class="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition">
-                    Rechercher
-                </button>
-            </form>
-        </div>
-
         <?php if (isset($animes) && !empty($animes['data']['Page']['media'])): ?>
             <div class="carousel-3d relative h-[600px]">
                 <div class="swiper w-full">
