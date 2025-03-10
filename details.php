@@ -258,18 +258,11 @@ require_once 'includes/header.php';
 
                     <!-- Actions -->
                     <div class="flex flex-col space-y-3 mt-4">
-                        <button id="watchlistBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition flex items-center justify-center space-x-2">
+                        <button onclick="toggleFavorite(<?= $anime['id'] ?>)" id="watchlistBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow transition flex items-center justify-center space-x-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
-                            <span>Ajouter à ma liste</span>
-                        </button>
-
-                        <button id="shareBtn" class="w-full py-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl shadow-sm transition flex items-center justify-center space-x-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
-                            </svg>
-                            <span>Partager</span>
+                            <span>Ajouter à mes favoris</span>
                         </button>
                     </div>
 
