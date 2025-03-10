@@ -57,7 +57,7 @@ query ($id: Int) {
                 isAnimationStudio
             }
         }
-        characters(sort: [ROLE, RELEVANCE]) {
+        characters(sort: [ROLE, RELEVANCE], perPage: 1000) {
             nodes {
                 name {
                     full
@@ -96,7 +96,7 @@ query ($id: Int) {
             url
             site
         }
-        recommendations(sort: RATING_DESC) {
+        recommendations(sort: RATING_DESC, perPage: 1000) {
             nodes {
                 mediaRecommendation {
                     id
